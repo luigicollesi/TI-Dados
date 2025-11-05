@@ -15,7 +15,9 @@ public class RouteResultDialog extends JDialog {
     public RouteResultDialog(Window owner, String routePath, double totalDistanceKm) {
         super(owner, "Rota otimizada", ModalityType.APPLICATION_MODAL);
         setUndecorated(true);
-        setSize(620, 360);
+        int stops = countStops(routePath);
+        int width = stops >= 5 ? 840 : (stops > 3 ? 720 : 620);
+        setSize(width, 360);
         setLocationRelativeTo(owner);
 
         JPanel root = AviationTheme.gradientPanel();
@@ -67,11 +69,9 @@ public class RouteResultDialog extends JDialog {
         planeIcon.setForeground(AviationTheme.PRIMARY_LIGHT);
         center.add(planeIcon, BorderLayout.NORTH);
 
-        String formattedRoute = "<html><center><span style='font-size:24px;font-weight:bold;color:#f0f8ff;'>"
-            + routePath
-            + "</span></center></html>";
-
-        JLabel routeLabel = new JLabel(formattedRoute, SwingConstants.CENTER);
+        JLabel routeLabel = new JLabel(routePath, SwingConstants.CENTER);
+        routeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        routeLabel.setForeground(new Color(240, 248, 255));
         routeLabel.setBorder(new EmptyBorder(20, 0, 15, 0));
         center.add(routeLabel, BorderLayout.CENTER);
 
@@ -118,5 +118,13 @@ public class RouteResultDialog extends JDialog {
                 }
             }
         }
+    }
+
+    private int countStops(String routePath) {
+        if (routePath == null || routePath.isBlank()) {
+            return 0;
+        }
+        String[] parts = routePath.split(" ➜ ");
+        return parts.length;
     }
 }
